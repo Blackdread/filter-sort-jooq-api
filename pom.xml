@@ -144,10 +144,9 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>${coveralls.version}</version>
                 <!--<configuration>-->
-                <!--<repoToken>yourcoverallsprojectrepositorytoken</repoToken>-->
+                <!--<repoToken>token given by environment variables</repoToken>-->
                 <!--</configuration>-->
             </plugin>
-            <!-- to check config later
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -161,7 +160,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 
