@@ -45,6 +45,7 @@ Spring) a DTO/POJO from params by specifying it in parameters of @RequestMapping
 
 Takes Map of key/alias with value and do the sorting/filtering
 
+Javax validation is used mostly as documentation for code (Nullable and NotNull)
 
 # Future changes
 
