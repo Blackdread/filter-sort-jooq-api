@@ -17,14 +17,12 @@ public class SortValueImpl implements SortValue {
     private final Field field;
 
     SortValueImpl(TableField tableField) {
-        Objects.requireNonNull(tableField);
-        this.tableField = tableField;
         this.field = null;
+        this.tableField = Objects.requireNonNull(tableField);
     }
 
     SortValueImpl(Field field) {
-        Objects.requireNonNull(field);
-        this.field = field;
+        this.field = Objects.requireNonNull(field);
         this.tableField = null;
     }
 
