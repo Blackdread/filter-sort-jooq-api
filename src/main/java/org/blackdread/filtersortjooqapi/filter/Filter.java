@@ -222,4 +222,7 @@ public final class Filter {
         }
         return new FilterValueImpl(keyParser, conditionCreator);
     }
+
+    private Filter() {
+    }
 }

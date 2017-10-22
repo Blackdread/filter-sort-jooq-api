@@ -12,6 +12,7 @@ class FilterParserByte implements FilterParser<Byte> {
 
     @Override
     public Byte parse(final String value) {
+        // TODO remove '0x' then ...
         return Byte.valueOf(value);
     }
 }

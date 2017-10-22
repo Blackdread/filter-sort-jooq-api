@@ -62,11 +62,13 @@ public final class KeyParsers {
      * @param keys    List of key
      * @param parsers List of parser function
      * @return KeyParser with N element to parse
-     * @throws IllegalArgumentException If keys and parsers size are different
+     * @throws IllegalArgumentException If keys and parsers size are different or empty
      */
     public static KeyParser ofN(final List<String> keys, final List<Function<String, Object>> parsers) {
         if (keys.size() != parsers.size())
             throw new IllegalArgumentException("Keys and parsers should be of same size");
+        if (keys.size() == 0)
+            throw new IllegalArgumentException("Keys and parsers can not be empty");
         checkDuplicateKeys(keys.toArray(new String[0]));
         return new KeyParserImpl(ImmutableList.copyOf(keys), ImmutableList.copyOf(parsers));
     }

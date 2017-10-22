@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  * Created by Yoann CAPLAIN on 2017/9/10.
  */
 @SuppressWarnings({"unchecked"})
-public class ValueImpl<T1, T2, T3, T4, T5, T6> implements
+public final class ValueImpl<T1, T2, T3, T4, T5, T6> implements
     Value1<T1>,
     Value2<T1, T2>,
     Value3<T1, T2, T3>,

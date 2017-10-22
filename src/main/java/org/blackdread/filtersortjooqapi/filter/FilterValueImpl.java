@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * Created by Yoann CAPLAIN on 2017/8/25.
  */
 @SuppressWarnings({"unchecked"})
-class FilterValueImpl<T1, T2, T3, T4, T5, T6> extends AbstractFilterValue implements
+final class FilterValueImpl<T1, T2, T3, T4, T5, T6> extends AbstractFilterValue implements
     FilterValue1<T1>,
     FilterValue2<T1, T2>,
     FilterValue3<T1, T2, T3>,
