@@ -26,7 +26,7 @@ public interface FilterParser<R> {
 
     /**
      * @param value  Value to be parsed
-     * @param parser
+     * @param parser Custom parser function
      * @return Value parsed and transform to generic value
      * @throws FilteringApiException If an error occurred at parsing
      * @deprecated No sure it is useful, if need to define a new parser then better to create the class and etc

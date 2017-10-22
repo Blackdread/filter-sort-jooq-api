@@ -81,10 +81,12 @@ Spring Framework @Valid @RequestBody). E.g: Data coming from a request and trans
 then DTO passed to service/repository
 
 
-##### AND / OR chaining API 
+### AND / OR chaining API 
 It is not a priority as I did not have any use for chaining conditions in many OR/AND.
 
 Default behavior is already to apply a AND between each filtered values.
+
+Might use Strategy pattern, default behavior and context given.
 
 Something that would look like:
     
@@ -98,7 +100,7 @@ Something that would look like:
     )
 
 
-##### Reflection of POJO/DTO
+### Reflection of POJO/DTO
 
 In web environment it is easy to use @RequestParam Map<String, String> requestParams 
 with Spring Framework but sometimes you want to be more type-safe and explicit of which 
@@ -109,7 +111,7 @@ Problem is that POJO/DTO might already be validated and mapped to correct type a
 String to then parse it again... That's something we could get rid of but to see if really necessary to implement a solution for that.
 
 
-##### Sorting Map
+### Sorting Map
 
 Something that would look like:
 

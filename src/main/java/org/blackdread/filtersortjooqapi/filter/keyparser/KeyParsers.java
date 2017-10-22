@@ -12,25 +12,10 @@ import java.util.function.Function;
 @SuppressWarnings({"unchecked"})
 public final class KeyParsers {
 
-    /**
-     * @param key
-     * @param parser
-     * @param <T>
-     * @return
-     */
     public static <T> KeyParser1<T> of(final String key, final Function<String, T> parser) {
         return new KeyParserImpl<>(ImmutableList.of(key), parser);
     }
 
-    /**
-     * @param key1
-     * @param parser1
-     * @param key2
-     * @param parser2
-     * @param <T1>
-     * @param <T2>
-     * @return
-     */
     public static <T1, T2> KeyParser2<T1, T2> of(final String key1, final Function<String, T1> parser1,
                                                  final String key2, final Function<String, T2> parser2) {
         checkDuplicateKeys(key1, key2);

@@ -11,23 +11,22 @@ public interface KeyParser {
 
     /**
      * Get the number of keys to be filtered (there are as many parsers)
+     *
+     * @return Number of keys to be filtered
      */
     int size();
 
     /**
-     *
      * @return Keys list
      */
     List<String> keys();
 
     /**
-     *
      * @return Keys as array
      */
     String[] getKeys();
 
     /**
-     *
      * @return Parsers that take a {@link String} and return an {@link Object}
      */
     Function<String, ?>[] getParsers();

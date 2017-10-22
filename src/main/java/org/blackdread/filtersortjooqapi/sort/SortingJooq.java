@@ -12,10 +12,10 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * <p>To complete</p>
- * <p>Interface defines default methods but we could use abstract class but it would
- * require to make all jOOQ repository extends it so for now interface is better and
- * more flexible. Using an abstract class would allow to hide internal methods but wait for Java 9 private methods :)</p>
+ * <p>Interface to  be implemented by repository that wants to provide sorting</p>
+ * <p>Interface defines default methods to limit copy/paste code while still providing a way to override
+ * default behavior. Using an abstract class would allow to hide internal methods but wait
+ * for Java 9 private methods :)</p>
  * Created by Yoann CAPLAIN on 2017/8/25.
  */
 public interface SortingJooq {
@@ -57,7 +57,7 @@ public interface SortingJooq {
 
 
     /**
-     * Is not supposed to be called from external of interface
+     * Is not supposed to be called from external of interface (might be private in Java 9)
      *
      * @param sortFieldName name of mapping field
      * @return SortValue associated with given sort field name
@@ -73,9 +73,9 @@ public interface SortingJooq {
     }
 
     /**
-     * Is not supposed to be called from external of interface
+     * Is not supposed to be called from external of interface (might be private in Java 9)
      *
-     * @param sortValue
+     * @param sortValue     SortValue to get SortField from
      * @param sortDirection Direction of sorting from request
      * @return A field sorted for jOOQ
      */

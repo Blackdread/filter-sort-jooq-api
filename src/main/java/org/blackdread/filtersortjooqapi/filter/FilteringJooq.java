@@ -7,13 +7,18 @@ import org.jooq.Condition;
 import org.jooq.impl.DSL;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Created by Yoann CAPLAIN on 2017/8/25.
  */
 public interface FilteringJooq {
+
+    // TODO Idea for Filter chaining AND/OR -> so kind of strategy pattern -> default on is all are AND, if overridden then it follow the one given (done via default method and overrides), we pass the whole context -> all values that matched and are ready to be filtered
 
     static final List<String> DEFAULT_IGNORED_KEY_FOR_FILTERING = ImmutableList.of("sort", "page", "size");
 
@@ -165,8 +170,8 @@ public interface FilteringJooq {
     /**
      * By default it is False.
      * <p>This is not a replacement of good code, you should pass to buildConditions only a map of key and values that should be used for filtering and that value is set</p>
-     * <p>If true then no exception are thrown on empty value for a key value from Map< String, String ></p>
-     * <p>If False then exception are thrown on empty value for a key value from Map< String, String ></p>
+     * <p>If true then no exception are thrown on empty value for a key value from {@code Map< String, String>}</p>
+     * <p>If False then exception are thrown on empty value for a key value from {@code Map< String, String>}</p>
      *
      * @return True if should skip value that are not present for a key
      * @deprecated Not sure to keep that as it makes unexpected result and does not respect API from client who sent a filter key with no value but that key expects to have a value

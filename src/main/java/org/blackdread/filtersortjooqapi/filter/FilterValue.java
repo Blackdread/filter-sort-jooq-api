@@ -13,6 +13,8 @@ public interface FilterValue {
 
     /**
      * Get the number of keys/values to be filtered (there are as many parsers)
+     *
+     * @return Number of keys/values to be filtered
      */
     int size();
 
