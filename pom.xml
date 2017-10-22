@@ -105,6 +105,18 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apiguardian</groupId>-->
+        <!--<artifactId>apiguardian-api</artifactId>-->
+        <!--<version>1.0.0</version>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
     </dependencies>
 
     <distributionManagement>
@@ -115,8 +127,8 @@
         <!-- Only if not using sonatype staging plugin -->
         <!-- http://central.sonatype.org/pages/apache-maven.html -->
         <!--<repository>-->
-            <!--<id>ossrh</id>-->
-            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+        <!--<id>ossrh</id>-->
+        <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
         <!--</repository>-->
     </distributionManagement>
 

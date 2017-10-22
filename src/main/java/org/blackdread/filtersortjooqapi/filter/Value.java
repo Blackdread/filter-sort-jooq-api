@@ -19,6 +19,7 @@ public interface Value {
      *
      * @param index Index of value
      * @return Value of index given
+     * @throws IndexOutOfBoundsException If index out of range for value
      */
     Object getValue(final int index);
 

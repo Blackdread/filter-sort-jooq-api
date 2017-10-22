@@ -3,41 +3,45 @@ package org.blackdread.filtersortjooqapi.filter.parser;
 import org.blackdread.filtersortjooqapi.exception.FilteringApiException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 class FilterParserIntTest {
 
-    @Test
-    void parse() {
-        Assertions.assertEquals(5, (int) FilterParser.ofInt().parse("5"));
-        Assertions.assertEquals(-5, (int) FilterParser.ofInt().parse("-5"));
-        Assertions.assertEquals(0, (int) FilterParser.ofInt().parse("0"));
-        Assertions.assertEquals(66, (int) FilterParser.ofInt().parse("066"));
-        Assertions.assertEquals(312313, (int) FilterParser.ofInt().parse("312313"));
+    static Stream<String> badStringValuesToParse() {
+        return Stream.of("foo", "poiuytd", "Odwdw0", "O", "  5", "   6", "--4");
     }
 
-    @Test
-    void parseThrows() {
-        Assertions.assertThrows(NumberFormatException.class, () -> FilterParser.ofInt().parse("poiuytd"));
-        Assertions.assertThrows(NumberFormatException.class, () -> FilterParser.ofInt().parse("Odwdw0"));
-        Assertions.assertThrows(NumberFormatException.class, () -> FilterParser.ofInt().parse("O"));
-        Assertions.assertThrows(NumberFormatException.class, () -> FilterParser.ofInt().parse(" 5   "));
+    static Stream<Arguments> goodStringParsableAndResult() {
+        return Stream.of(Arguments.of("5", 5), Arguments.of("-5", -5), Arguments.of("0", 0),
+            Arguments.of("006", 6), Arguments.of("3132324", 3132324));
     }
 
-    @Test
-    void parseWithApiException() {
-        Assertions.assertEquals(5, (int) FilterParser.ofInt().parseWithApiException("5"));
-        Assertions.assertEquals(-5, (int) FilterParser.ofInt().parseWithApiException("-5"));
-        Assertions.assertEquals(0, (int) FilterParser.ofInt().parseWithApiException("0"));
-        Assertions.assertEquals(66, (int) FilterParser.ofInt().parseWithApiException("066"));
-        Assertions.assertEquals(312313, (int) FilterParser.ofInt().parseWithApiException("312313"));
+    @ParameterizedTest
+    @MethodSource("goodStringParsableAndResult")
+    void parse(final String argument, final int expected) {
+        Assertions.assertEquals(expected, (int) FilterParser.ofInt().parse(argument));
     }
 
-    @Test
-    void parseWithApiExceptionThrows() {
-        Assertions.assertThrows(FilteringApiException.class, () -> FilterParser.ofInt().parseWithApiException("poiuytd"));
-        Assertions.assertThrows(FilteringApiException.class, () -> FilterParser.ofInt().parseWithApiException("Odwdw0"));
-        Assertions.assertThrows(FilteringApiException.class, () -> FilterParser.ofInt().parseWithApiException("O"));
-        Assertions.assertThrows(FilteringApiException.class, () -> FilterParser.ofInt().parseWithApiException(" 5   "));
+    @ParameterizedTest
+    @MethodSource("badStringValuesToParse")
+    void parseThrows(final String argument) {
+        Assertions.assertThrows(NumberFormatException.class, () -> FilterParser.ofInt().parse(argument));
+    }
+
+    @ParameterizedTest
+    @MethodSource("goodStringParsableAndResult")
+    void parseWithApiException(final String argument, final int expected) {
+        Assertions.assertEquals(expected, (int) FilterParser.ofInt().parseWithApiException(argument));
+    }
+
+    @ParameterizedTest
+    @MethodSource("badStringValuesToParse")
+    void parseWithApiExceptionThrows(final String argument) {
+        Assertions.assertThrows(FilteringApiException.class, () -> FilterParser.ofInt().parseWithApiException(argument));
     }
 
     @Test
@@ -49,52 +53,27 @@ class FilterParserIntTest {
             () -> FilterParser.ofInt().parseWithApiException("tybnksd", Integer::valueOf));
     }
 
-    @Test
-    void parseOrDefault() {
-        final int result = FilterParser.ofInt().parseOrDefault("5", -2);
-        Assertions.assertEquals(5, result);
-
-        final int result2 = FilterParser.ofInt().parseOrDefault("58979", -2);
-        Assertions.assertEquals(58979, result2);
-
-        final int result3 = FilterParser.ofInt().parseOrDefault("-3258979", -2);
-        Assertions.assertEquals(-3258979, result3);
+    @ParameterizedTest
+    @MethodSource("goodStringParsableAndResult")
+    void parseOrDefault(final String argument, final int expected) {
+        Assertions.assertEquals(expected, (int) FilterParser.ofInt().parseOrDefault(argument, -2));
     }
 
-    @Test
-    void parseOrDefaultWithBadInput() {
-        final int result = FilterParser.ofInt().parseOrDefault("--5", -2);
-        Assertions.assertEquals(-2, result);
-
-        final int result2 = FilterParser.ofInt().parseOrDefault("uguyyt6", -2);
-        Assertions.assertEquals(-2, result2);
-
-        // Might use trim later by default
-        final int result3 = FilterParser.ofInt().parseOrDefault("    8     ", -2);
-        Assertions.assertEquals(-2, result3);
+    @ParameterizedTest
+    @MethodSource("badStringValuesToParse")
+    void parseOrDefaultWithBadInput(final String argument) {
+        Assertions.assertEquals(-2, (int) FilterParser.ofInt().parseOrDefault(argument, -2));
     }
 
-    @Test
-    void parseOrDefaultWithSupplier() {
-        final int result = FilterParser.ofInt().parseOrDefault("5", () -> -2);
-        Assertions.assertEquals(5, result);
-
-        final int result2 = FilterParser.ofInt().parseOrDefault("58979", () -> -2);
-        Assertions.assertEquals(58979, result2);
-
-        final int result3 = FilterParser.ofInt().parseOrDefault("-3258979", () -> -2);
-        Assertions.assertEquals(-3258979, result3);
+    @ParameterizedTest
+    @MethodSource("goodStringParsableAndResult")
+    void parseOrDefaultWithSupplier(final String argument, final int expected) {
+        Assertions.assertEquals(expected, (int) FilterParser.ofInt().parseOrDefault(argument, () -> -2));
     }
 
-    @Test
-    void parseOrDefaultWithSupplierBadInput() {
-        final int result = FilterParser.ofInt().parseOrDefault("--5", () -> -2);
-        Assertions.assertEquals(-2, result);
-
-        final int result2 = FilterParser.ofInt().parseOrDefault("uguyyt6", () -> -2);
-        Assertions.assertEquals(-2, result2);
-
-        final int result3 = FilterParser.ofInt().parseOrDefault("   8   ", () -> -2);
-        Assertions.assertEquals(-2, result3);
+    @ParameterizedTest
+    @MethodSource("badStringValuesToParse")
+    void parseOrDefaultWithSupplierBadInput(final String argument) {
+        Assertions.assertEquals(-2, (int) FilterParser.ofInt().parseOrDefault(argument, () -> -2));
     }
 }

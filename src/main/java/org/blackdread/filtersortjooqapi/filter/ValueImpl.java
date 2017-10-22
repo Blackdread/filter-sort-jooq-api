@@ -20,10 +20,12 @@ public final class ValueImpl<T1, T2, T3, T4, T5, T6> implements
     private final Object[] values;
 
     ValueImpl(final Object... values) {
+        checkNull(values);
         this.values = Objects.requireNonNull(values);
     }
 
     ValueImpl(final Collection<Object> values) {
+        checkNull(values);
         this.values = Objects.requireNonNull(values).toArray(new Object[values.size()]);
     }
 
@@ -81,5 +83,24 @@ public final class ValueImpl<T1, T2, T3, T4, T5, T6> implements
     @Override
     public T6 value6() {
         return (T6) getValue(5);
+    }
+
+
+    private void checkNull(final Object... values) {
+        if (values != null && values.length < 1)
+            throw new IllegalArgumentException("Cannot have 0 value");
+        for (Object o : values) {
+            if (o == null)
+                throw new IllegalArgumentException("A value cannot be null");
+        }
+    }
+
+    private void checkNull(final Collection<Object> values) {
+        if (values != null && values.size() < 1)
+            throw new IllegalArgumentException("Cannot have 0 value");
+        for (Object o : values) {
+            if (o == null)
+                throw new IllegalArgumentException("A value cannot be null");
+        }
     }
 }

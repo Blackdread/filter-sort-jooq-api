@@ -118,7 +118,7 @@ class FilterValueTest {
 
     @Test
     void throwWithWrongCountValueBuildCondition1() {
-        Assertions.assertThrows(ClassCastException.class, () -> filterValue1.buildCondition(Collections.emptyList()));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> filterValue1.buildCondition(Collections.emptyList()));
         Assertions.assertThrows(ClassCastException.class, () -> filterValue1.buildCondition(Arrays.asList("val1", "val2")));
     }
 
@@ -134,11 +134,11 @@ class FilterValueTest {
     @Test
     void throwWithWrongCountValueBuildCondition3AndMore() {
         // TODO Should we care about not enough or too many ? (not supposed to happen if use public API)
-        filterValue3.buildCondition(Collections.emptyList());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> filterValue3.buildCondition(Collections.emptyList()));
         filterValue3.buildCondition(Arrays.asList("val1", "val2"));
         filterValue3.buildCondition(Arrays.asList("val1", "val2", "val3", "val4"));
 
-        filterValue5.buildCondition(Collections.emptyList());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> filterValue5.buildCondition(Collections.emptyList()));
         filterValue5.buildCondition(Arrays.asList("val1", "val2"));
         filterValue5.buildCondition(Arrays.asList("val1", "val2", "val3", "val4", "val5", "val6"));
     }
