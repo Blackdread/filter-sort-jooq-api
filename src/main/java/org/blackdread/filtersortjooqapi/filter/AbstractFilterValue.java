@@ -43,7 +43,7 @@ public abstract class AbstractFilterValue implements FilterValue {
         this.throwOnMissingKeysFound = false;
     }
 
-    AbstractFilterValue(final KeyParser keyParser, final Function<Object, Condition> conditionCreator, boolean throwOnMissingKeysFound) {
+    AbstractFilterValue(final KeyParser keyParser, final Function<Object, Condition> conditionCreator, final boolean throwOnMissingKeysFound) {
         this.conditionSupplier = null;
         this.keyParser = Objects.requireNonNull(keyParser);
         this.conditionCreator = Objects.requireNonNull(conditionCreator);
@@ -51,7 +51,7 @@ public abstract class AbstractFilterValue implements FilterValue {
         this.throwOnMissingKeysFound = throwOnMissingKeysFound;
     }
 
-    AbstractFilterValue(final KeyParser keyParser, final BiFunction<Object, Object, Condition> conditionCreator, boolean throwOnMissingKeysFound) {
+    AbstractFilterValue(final KeyParser keyParser, final BiFunction<Object, Object, Condition> conditionCreator, final boolean throwOnMissingKeysFound) {
         this.conditionSupplier = null;
         this.keyParser = Objects.requireNonNull(keyParser);
         this.conditionCreator = null;

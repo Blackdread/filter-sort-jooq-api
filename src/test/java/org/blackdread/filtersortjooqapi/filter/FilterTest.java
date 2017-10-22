@@ -1,15 +1,11 @@
 package org.blackdread.filtersortjooqapi.filter;
 
-import org.blackdread.filtersortjooqapi.filter.Filter;
-import org.blackdread.filtersortjooqapi.filter.FilterValue;
-import org.blackdread.filtersortjooqapi.filter.FilterValue1;
-import org.jooq.Condition;
+import org.blackdread.filtersortjooqapi.filter.keyparser.*;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Created by Yoann CAPLAIN on 2017/10/20.
@@ -17,133 +13,131 @@ import java.util.Collections;
 class FilterTest {
 
     @Test
-    void ofSupplierThrowsIfNullReturned() {
-        final FilterValue filter = Filter.of("myKey", () -> null);
-        Assertions.assertThrows(IllegalStateException.class, filter::buildCondition);
+    void throwWithDuplicateKeySameFilter() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Filter.of("key", "key", val1 -> "value", val2 -> "value", (value1, value2) -> DSL.trueCondition()));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Filter.of("key", "key", "key3", val1 -> "value", val2 -> "value", val3 -> "value", value3 -> DSL.trueCondition()));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Filter.of("key", "key2", "key", "key4", val1 -> "value", val2 -> "value", val3 -> "value", val4 -> "value", value4 -> DSL.trueCondition()));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> KeyParsers.ofN(
+            Arrays.asList("key", "key1", "key2", "key", "key4", "key5", "key6", "key6", "key8"),
+            Arrays.asList(val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value")
+        ));
     }
 
     @Test
-    void ofSupplierNotNull() {
-        final FilterValue filter = Filter.of("myKey", DSL::trueCondition);
-        final Condition condition = filter.buildCondition();
-        Assertions.assertNotNull(condition);
-        Assertions.assertEquals(DSL.trueCondition(), condition);
+    void ofSupplier() {
+        final FilterValue supplierFilter = Filter.of("key", DSL::trueCondition);
+        Assertions.assertEquals(1, supplierFilter.size());
+        Assertions.assertNotNull(supplierFilter);
     }
 
     @Test
-    void ofSupplierThrowsIfWrongBuildCondition() {
-        final FilterValue filter = Filter.of("myKey", () -> null);
-        Assertions.assertThrows(IllegalStateException.class, () -> filter.buildCondition(Arrays.asList("obj1", "obj2", "obj3")));
+    void of1() {
+        final FilterValue filterValue1 = Filter.of("key", val -> "value", value -> DSL.trueCondition());
+        Assertions.assertEquals(1, filterValue1.size());
+        Assertions.assertNotNull(filterValue1);
     }
 
     @Test
-    void supplierIsTrue() {
-        final FilterValue filter = Filter.of("myKey", DSL::trueCondition);
-        Assertions.assertTrue(filter.isConditionSupplier());
-    }
-
-    @Test
-    void supplierIsNotTrueWithParams() {
-        final FilterValue1<Integer> filter = Filter.of("myKey", valueToParse -> 5, value -> DSL.trueCondition());
-        Assertions.assertFalse(filter.isConditionSupplier());
-    }
-
-    @Test
-    void buildConditionNoArgumentsThrowsIfNoSupplier() {
-        final FilterValue1<Integer> filter = Filter.of("myKey", valueToParse -> 5, value -> DSL.trueCondition());
-        Assertions.assertThrows(IllegalStateException.class, filter::buildCondition);
-    }
-
-    @Test
-    void buildConditionWithParamThrowsOnNullConditionReturned() {
-        final FilterValue1<Integer> filter = Filter.of("myKey", valueToParse -> 5, value -> null);
-        Assertions.assertThrows(IllegalStateException.class, () -> filter.buildCondition(Collections.singletonList(9)));
-    }
-
-    // It throws as filter.buildCondition(...) is not supposed to be called from external of API, it fails due to generic is defined as Integer (but this is normal behavior)
-    @Test
-    void ofCustomParserAndManuallyCallBuildConditionWithWrongTypeThrows() {
-        final FilterValue1<Integer> filter = Filter.of("myKey", valueToParse -> 5, value -> DSL.trueCondition());
-        Assertions.assertThrows(ClassCastException.class, () -> filter.buildCondition(Collections.singletonList("whatever")));
-        Assertions.assertThrows(ClassCastException.class, () -> filter.buildCondition(Collections.singletonList("54")));
-        Assertions.assertEquals(DSL.trueCondition(), filter.buildCondition(Collections.singletonList(56)));
-    }
-
-    // It throws as filter.buildCondition(...) is not supposed to be called from external of API, it fails due to generic is defined as Integer (but this is normal behavior)
-    @Test
-    void ofCustomParserAndManuallyCallBuildConditionWithWrongTypeThrows2() {
-        final FilterValue filter = Filter.of("myKey", valueToParse -> 5, value -> DSL.trueCondition());
-        Assertions.assertThrows(ClassCastException.class, () -> filter.buildCondition(Collections.singletonList("whatever")));
-        Assertions.assertThrows(ClassCastException.class, () -> filter.buildCondition(Collections.singletonList("54")));
-        Assertions.assertEquals(DSL.trueCondition(), filter.buildCondition(Collections.singletonList(56)));
-    }
-
-    // Does not throw as there is no casting done to get an Object type
-    @Test
-    void ofCustomParserAndManuallyCallBuildConditionWithNoTypeSafety() {
-        final FilterValue1<Object> filter = Filter.of("myKey", valueToParse -> 5, value -> DSL.trueCondition());
-        Assertions.assertEquals(DSL.trueCondition(), filter.buildCondition(Collections.singletonList("whatever")));
-        Assertions.assertEquals(DSL.trueCondition(), filter.buildCondition(Collections.singletonList("54")));
-        Assertions.assertEquals(DSL.trueCondition(), filter.buildCondition(Collections.singletonList(56)));
-    }
-
-    @Test
-    void ofCustomParser1Param() {
-        final FilterValue1<Integer> filter = Filter.of("myKey", valueToParse -> 5, value -> DSL.trueCondition());
-        final Condition condition = filter.buildCondition(Collections.singletonList(9));
-
-        final int parserResult = filter.getKeyParser1().parser1().apply("whatever");
-        Assertions.assertEquals(5, parserResult);
-        Assertions.assertEquals(DSL.trueCondition(), condition);
-    }
-
-    @Test
-    void ofCustomParser2Params() {
-    }
-
-    @Test
-    void ofCustomParser3Params() {
-
+    void of1KeyParser() {
+        final FilterValue filterValue1 = Filter.of(KeyParsers.of("key", val -> "value"), value -> DSL.trueCondition());
+        Assertions.assertEquals(1, filterValue1.size());
+        Assertions.assertNotNull(filterValue1);
     }
 
     @Test
     void of2() {
+        final FilterValue filterValue2 = Filter.of(
+            "key", "key2",
+            val1 -> "value", val2 -> "value",
+            (value1, value2) -> DSL.trueCondition());
+        Assertions.assertEquals(2, filterValue2.size());
+        Assertions.assertNotNull(filterValue2);
+    }
+
+    @Test
+    void of2KeyParser() {
+        final FilterValue filterValue2 =
+            Filter.of(
+                KeyParsers.of("key", val1 -> "value", "key2", val2 -> "value"),
+                (value1, value2) -> DSL.trueCondition());
+        Assertions.assertEquals(2, filterValue2.size());
+        Assertions.assertNotNull(filterValue2);
     }
 
     @Test
     void of3() {
+        final FilterValue filterValue3 = Filter.of(
+            "key", "key2", "key3",
+            val1 -> "value", val2 -> "value", val3 -> "value",
+            value -> DSL.trueCondition());
+        Assertions.assertEquals(3, filterValue3.size());
+        Assertions.assertNotNull(filterValue3);
+    }
+
+    @Test
+    void of3KeyParser() {
+        final FilterValue filterValue3 = Filter.of(
+            KeyParsers.of("key", val1 -> "value", "key2", val2 -> "value", "key3", val3 -> "value"),
+            value -> DSL.trueCondition());
+        Assertions.assertEquals(3, filterValue3.size());
+        Assertions.assertNotNull(filterValue3);
     }
 
     @Test
     void of4() {
+        final FilterValue filterValue4 = Filter.of(
+            "key", "key2", "key3", "key4",
+            val1 -> "value", val2 -> "value", val3 -> "value", val4 -> "value",
+            value -> DSL.trueCondition());
+        Assertions.assertEquals(4, filterValue4.size());
+        Assertions.assertNotNull(filterValue4);
+    }
+
+    @Test
+    void of4KeyParser() {
+        final FilterValue filterValue4 = Filter.of(
+            KeyParsers.of("key", val1 -> "value", "key2", val2 -> "value", "key3", val3 -> "value", "key4", val4 -> "value"),
+            value -> DSL.trueCondition());
+        Assertions.assertEquals(4, filterValue4.size());
+        Assertions.assertNotNull(filterValue4);
     }
 
     @Test
     void of5() {
+        final KeyParser5<String, String, String, String, String> keyParser5 =
+            KeyParsers.of("key", val1 -> "value", "key2", val1 -> "value", "key3", val1 -> "value", "key4", val1 -> "value", "key5", val1 -> "value");
+        final FilterValue filterValue5 = Filter.of(keyParser5, value5 -> DSL.trueCondition());
+        Assertions.assertEquals(5, filterValue5.size());
+        Assertions.assertNotNull(filterValue5);
     }
 
     @Test
     void of6() {
+        final KeyParser6<String, String, String, String, String, String> keyParser6 =
+            KeyParsers.of("key", val1 -> "value", "key2", val1 -> "value", "key3", val1 -> "value", "key4", val1 -> "value", "key5", val1 -> "value", "key6", val1 -> "value");
+        final FilterValue filterValue6 = Filter.of(keyParser6, value6 -> DSL.trueCondition());
+        Assertions.assertEquals(6, filterValue6.size());
+        Assertions.assertNotNull(filterValue6);
     }
 
     @Test
-    void of7() {
-    }
-
-    @Test
-    void of8() {
-    }
-
-    @Test
-    void of9() {
-    }
-
-    @Test
-    void of10() {
+    void ofNThrowsLessThan2() {
+        final KeyParser1<String> keyParser1 = KeyParsers.of("key1", val -> "value");
+        final KeyParser2<String, String> keyParser2 = KeyParsers.of("key1", val -> "value", "key2", val -> "value");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Filter.ofN(keyParser1, value -> DSL.trueCondition()));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Filter.ofN(keyParser2, value -> DSL.trueCondition()));
     }
 
     @Test
     void ofN() {
+        final KeyParser keyParserN = KeyParsers.ofN(
+            Arrays.asList("key", "key1", "key2", "key3", "key4", "key5", "key6", "key7", "key8"),
+            Arrays.asList(val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value", val1 -> "value")
+        );
+        final FilterValue filterValueN = Filter.ofN(keyParserN, value -> DSL.trueCondition());
+        Assertions.assertEquals(9, filterValueN.size());
+        Assertions.assertNotNull(filterValueN);
     }
 
 }

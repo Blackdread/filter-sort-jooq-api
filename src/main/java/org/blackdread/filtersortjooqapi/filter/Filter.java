@@ -4,7 +4,6 @@ import org.blackdread.filtersortjooqapi.filter.keyparser.*;
 import org.jooq.Condition;
 
 import javax.validation.constraints.NotNull;
-import java.security.InvalidParameterException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -214,12 +213,12 @@ public final class Filter {
      * @param conditionCreator Condition function of condition that takes values produced by parser
      * @param <T>              To allow to be able to not cast in condition creator function when using less values than other interfaces defined from {@link Value}
      * @return Filter value that will be dynamically called when building conditions
-     * @throws InvalidParameterException If KeyParser size is less than 2
+     * @throws IllegalArgumentException If KeyParser size is less or equal to 2
      */
     public static <T extends Value> FilterValue ofN(@NotNull final KeyParser keyParser,
                                                     @NotNull final Function<T, Condition> conditionCreator) {
-        if (keyParser.size() < 2) {
-            throw new InvalidParameterException("KeyParser must be of size 2 or more. Use another builder");
+        if (keyParser.size() <= 2) {
+            throw new IllegalArgumentException("KeyParser must be of size 3 or more. Use another builder");
         }
         return new FilterValueImpl(keyParser, conditionCreator);
     }
