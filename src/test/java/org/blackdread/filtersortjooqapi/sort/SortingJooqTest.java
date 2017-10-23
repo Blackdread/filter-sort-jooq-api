@@ -20,7 +20,6 @@ class SortingJooqTest {
 
     private SortingJooqImpl1 sortingJooqImpl1;
 
-
     @BeforeEach
     void setUp() {
         sortingJooqImpl1 = new SortingJooqImpl1();
@@ -130,6 +129,7 @@ class SortingJooqTest {
     @Test
     void getSortAliasMapping() {
         Assertions.assertNotNull(sortingJooqImpl1.getSortAliasMapping());
+        Assertions.assertTrue(sortingJooqImpl1.getSortAliasMapping().isEmpty());
     }
 
     @Test

@@ -158,7 +158,7 @@ public interface FilteringJooq {
 
 
     /**
-     * This is not a replacement of good code, you should pass to buildConditions only a map of key and values that should be used for filtering and not always define ignored keys
+     * <p>his is not a replacement of good code, you should pass to buildConditions only a map of key and values that should be used for filtering and not always define ignored keys</p>
      * <p>This should almost never be overridden but as a precaution we include that possibility in this API</p>
      *
      * @return List of keys that filtering will skip if encountered
@@ -170,6 +170,7 @@ public interface FilteringJooq {
     /**
      * By default it is False.
      * <p>This is not a replacement of good code, you should pass to buildConditions only a map of key and values that should be used for filtering and that value is set</p>
+     * <p>For boolean/isNull/isNotNull aliases, simply decide constant value you want to use like true,false,1,0,isnull,isnotnull,etc</p>
      * <p>If true then no exception are thrown on empty value for a key value from {@code Map< String, String>}</p>
      * <p>If False then exception are thrown on empty value for a key value from {@code Map< String, String>}</p>
      *
@@ -183,12 +184,13 @@ public interface FilteringJooq {
 
     /**
      * Helper method but not recommended to use as parsing has to be done inside conditionCreator
+     * <p>Condition is called only if key is found and has a value</p>
      *
      * @param map              Map containing key and values of request
      * @param key              Key to search for
-     * @param conditionCreator Condition creator
+     * @param conditionCreator Condition creator called if key is found
      * @return Condition created or empty optional
-     * @deprecated Only deprecated as not sure we should keep that
+     * @deprecated Only deprecated as not sure we should keep that, never used for projects (might be deleted)
      */
     default Optional<Condition> getCondition(final Map<String, String> map, final String key, final Function<String, Condition> conditionCreator) {
         return getValue(map, key)
@@ -197,12 +199,13 @@ public interface FilteringJooq {
 
     /**
      * Helper method but not recommended to use as parsing has to be done inside conditionCreator
+     * <p>Condition is called only if key is found and has a value</p>
      *
      * @param map              Map containing key and values of request
      * @param key              Key to search for
-     * @param conditionCreator Condition creator
+     * @param conditionCreator Condition creator called if key is found
      * @return Condition created or null
-     * @deprecated Only deprecated as not sure we should keep that
+     * @deprecated Only deprecated as not sure we should keep that, never used for projects (might be deleted)
      */
     default Condition getConditionOrNull(final Map<String, String> map, final String key, final Function<String, Condition> conditionCreator) {
         return getValue(map, key)
