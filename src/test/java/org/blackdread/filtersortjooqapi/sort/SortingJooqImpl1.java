@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO Might replace that with Mockito
  * Created by Yoann CAPLAIN on 2017/10/23.
  */
 public class SortingJooqImpl1 implements SortingJooq {
+    // Could try that with Mockito but no point here
 
     private final Map<String, SortValue> map = new HashMap<>();
 

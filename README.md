@@ -82,8 +82,10 @@ then DTO passed to service/repository
 
 
 ### AND / OR chaining API 
-It is not a priority as I did not have any use for chaining conditions in many OR/AND.
-And it requires more thought as some key/alias might be missing in a Filter.and(..)/Filter.or(...).
+It is not a priority as I did not have any use for chaining conditions in many OR/AND (usually it is always AND, could a simple feature to override with a OR).
+And it requires more thought as some key/alias might be missing (ignore filter or throw or use only what's 
+available if missing keys/aliases? allow duplicate key in different Filter.or/and?) in a Filter.and(..)/Filter.or(...).
+And also we might need to have dynamic AND/OR at runtime -> often with check boxes in UI, so should design a parsable text API for dynamic AND/OR.
 
 Default behavior is already to apply a AND between each filtered values.
 
