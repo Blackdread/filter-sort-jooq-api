@@ -83,6 +83,7 @@ then DTO passed to service/repository
 
 ### AND / OR chaining API 
 It is not a priority as I did not have any use for chaining conditions in many OR/AND.
+And it requires more thought as some key/alias might be missing in a Filter.and(..)/Filter.or(...).
 
 Default behavior is already to apply a AND between each filtered values.
 

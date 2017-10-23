@@ -43,6 +43,7 @@
 
         <junit.version>5.0.1</junit.version>
         <junit.surefire.plugin.version>1.0.1</junit.surefire.plugin.version>
+        <!--<mockito.version>2.11.0</mockito.version>-->
 
         <coveralls.version>4.3.0</coveralls.version>
     </properties>
@@ -117,6 +118,13 @@
         <!--<version>1.0.0</version>-->
         <!--<scope>test</scope>-->
         <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.mockito</groupId>-->
+            <!--<artifactId>mockito-core</artifactId>-->
+            <!--<version>${mockito.version}</version>-->
+        <!--</dependency>-->
+
     </dependencies>
 
     <!--<distributionManagement>-->
@@ -124,12 +132,12 @@
     <!--<id>ossrh</id>-->
     <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
     <!--</snapshotRepository>-->
-        <!-- Only if not using sonatype staging plugin -->
-        <!-- http://central.sonatype.org/pages/apache-maven.html -->
-        <!--<repository>-->
-        <!--<id>ossrh</id>-->
-        <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-        <!--</repository>-->
+    <!-- Only if not using sonatype staging plugin -->
+    <!-- http://central.sonatype.org/pages/apache-maven.html -->
+    <!--<repository>-->
+    <!--<id>ossrh</id>-->
+    <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+    <!--</repository>-->
     <!--</distributionManagement>-->
 
     <build>

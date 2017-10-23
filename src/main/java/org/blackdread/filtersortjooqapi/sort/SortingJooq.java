@@ -5,10 +5,12 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.springframework.data.domain.Sort;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,25 +33,33 @@ public interface SortingJooq {
     }
 
     /**
+     * TODO Change to List for return value
+     *
      * @param sortSpecification Sort from Spring Data
-     * @return Collection of fields to sort (can be empty if passed variable is null or no sort values)
-     * @throws SortingApiException if any sort field given cannot be found (it should result in a 400 error message)
+     * @return Collection of fields to sort (can be empty if {@code sortSpecification} is null or no sort values)
+     * @throws SortingApiException if any sort field given cannot be found (it should result in a 400 error message) or sort contains duplicate keys
      */
     @NotNull
-    default Collection<SortField<?>> buildOrderBy(final Sort sortSpecification) {
-        Collection<SortField<?>> querySortFields = new ArrayList<>();
+    default Collection<SortField<?>> buildOrderBy(@Nullable final Sort sortSpecification) {
+        Collection<SortField<?>> querySortFields = new ArrayList<>(10);
 
         if (sortSpecification == null) {
             return getDefaultSorting();
         }
 
+        List<String> usedSortKey = new ArrayList<>(10);
+
         for (final Sort.Order specifiedField : sortSpecification) {
             String sortFieldName = specifiedField.getProperty();
             Sort.Direction sortDirection = specifiedField.getDirection();
 
+            if (usedSortKey.contains(sortFieldName))
+                throw new SortingApiException("Cannot sort on duplicate keys");
+
             SortValue sortValue = getTableField(sortFieldName);
             SortField<?> querySortField = convertTableFieldToSortField(sortValue, sortDirection);
             querySortFields.add(querySortField);
+            usedSortKey.add(sortFieldName);
         }
 
         return querySortFields;
@@ -97,7 +107,8 @@ public interface SortingJooq {
     Map<String, SortValue> getSortAliasMapping();
 
     /**
-     * Return default sorting. An empty collection if not sorting values set or the first one defined.
+     * TODO Change to List for return value
+     * <p>Return default sorting. An empty collection if not sorting values set or the first one defined.</p>
      * <p>Overridden implementation can set many field to sort on by default</p>
      *
      * @return Collection of field to sort on (can be empty)
