@@ -3,23 +3,19 @@ package org.blackdread.filtersortjooqapi.filter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.blackdread.filtersortjooqapi.exception.FilteringApiException;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.stream.Stream;
 
 class FilteringJooqTest {
@@ -42,11 +38,27 @@ class FilteringJooqTest {
                 DSL.trueCondition()
             ),
             Arguments.of(
-                // this one makes no sense but this correct ^^
+                // this one makes no sense but this is correct ^^
                 ImmutableMap.of("key1", "value1", "key2", "12:25:30", "key3", "2017-05-17T12:25:30"),
-                Arrays.asList(Filter.of("key1", DSL::trueCondition), Filter.of("key2", DSL::trueCondition), Filter.of("key3", DSL::trueCondition), Filter.of("key4", DSL::trueCondition), Filter.of("key5", DSL::trueCondition)),
+                Arrays.asList(Filter.of("key1", DSL::trueCondition), Filter.of("key2", DSL::trueCondition),
+                    Filter.of("key3", DSL::trueCondition), Filter.of("key4", DSL::trueCondition),
+                    Filter.of("key5", DSL::trueCondition)),
                 createNTrueCondition(4)
-            )
+            ),
+            // TODO might fail sometimes as Map of Impl is not predictable in ordering
+            Arguments.of(
+                ImmutableMap.of("key1", "value1", "key2", "12:25:30", "key3", "2017-05-17T12:25:30"),
+                Arrays.asList(Filter.of(
+                    "key1", "key2",
+                    v1 -> "val1", v2 -> LocalTime.of(12, 23, 34),
+                    (v1, v2) -> DSL.field("name", String.class).likeIgnoreCase(v1 + "%")
+                        .and(DSL.field("atime", Time.class).ge(Time.valueOf(v2)))),
+                    Filter.of("key3", LocalDateTime::parse, v1 -> DSL.field("a_date_time", Timestamp.class).lessThan(Timestamp.valueOf(v1))),
+                    Filter.of("key4", DSL::trueCondition), Filter.of("key5", DSL::trueCondition)),
+                DSL.trueCondition()
+                    .and(DSL.field("name", String.class).likeIgnoreCase("val1%"))
+                    .and(DSL.field("atime", Time.class).ge(Time.valueOf("12:23:34")))
+                    .and(DSL.field("a_date_time", Timestamp.class).lessThan(Timestamp.valueOf("2017-05-17 12:25:30"))))
         );
     }
 
@@ -73,6 +85,14 @@ class FilteringJooqTest {
                 condition = condition.and(DSL.trueCondition());
         }
         return condition;
+    }
+
+    @ParameterizedTest
+    @MethodSource("goodMapConditionAndResult")
+    void buildConditions(final Map<String, String> params, final List<FilterValue> filterValues, final Condition expectedCondition) {
+        filteringJooqImpl1.getFilterValues().addAll(filterValues);
+        final Condition condition = filteringJooqImpl1.buildConditions(params);
+        Assertions.assertEquals(expectedCondition, condition);
     }
 
     @Test
@@ -158,12 +178,9 @@ class FilteringJooqTest {
         Assertions.assertNull(filteringJooqImpl1.getConditionOrNull(mapWithSpaceValues, "key1", s -> DSL.trueCondition()));
     }
 
-    @ParameterizedTest
-    @MethodSource("goodMapConditionAndResult")
-    void buildConditions(final Map<String, String> params, final List<FilterValue> filterValues, final Condition expectedCondition) {
-        filteringJooqImpl1.getFilterValues().addAll(filterValues);
-        final Condition condition = filteringJooqImpl1.buildConditions(params);
-        Assertions.assertEquals(expectedCondition, condition);
+    @Test
+    void buildConditionsThrowsOnNotFoundFilterKey() {
+        filteringJooqImpl1.getFilterValues().add(Filter.of("key1", DSL::trueCondition));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl1.buildConditions(ImmutableMap.of("key1", "value1", "key2", "12:25:30")));
     }
-
 }

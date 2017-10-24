@@ -143,6 +143,8 @@
         <!--</repository>-->
     </distributionManagement>
 
+    <!-- To allow to not need to sign for snapshot deploy -->
+    <!-- Until we decide to put GPG settings in Travis, we have to manually deploy releases -->
     <profiles>
         <profile>
             <id>release</id>
