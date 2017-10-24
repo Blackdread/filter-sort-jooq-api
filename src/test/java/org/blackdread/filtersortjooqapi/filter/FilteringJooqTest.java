@@ -1,13 +1,26 @@
 package org.blackdread.filtersortjooqapi.filter;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.jooq.Condition;
 import org.jooq.impl.DSL;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 class FilteringJooqTest {
 
@@ -19,6 +32,23 @@ class FilteringJooqTest {
 
     private static final Map<String, String> mapWithEmptyValues = Maps.asMap(Sets.newHashSet("key1", "key2", "key3"), a -> "");
     private static final Map<String, String> mapWithSpaceValues = Maps.asMap(Sets.newHashSet("key1", "key2", "key3"), a -> "   ");
+
+    // TODO Add more good ones and create another for bad ones
+    static Stream<Arguments> goodMapConditionAndResult() {
+        return Stream.of(
+            Arguments.of(
+                ImmutableMap.of(),
+                Collections.emptyList(),
+                DSL.trueCondition()
+            ),
+            Arguments.of(
+                // this one makes no sense but this correct ^^
+                ImmutableMap.of("key1", "value1", "key2", "12:25:30", "key3", "2017-05-17T12:25:30"),
+                Arrays.asList(Filter.of("key1", DSL::trueCondition), Filter.of("key2", DSL::trueCondition), Filter.of("key3", DSL::trueCondition), Filter.of("key4", DSL::trueCondition), Filter.of("key5", DSL::trueCondition)),
+                createNTrueCondition(4)
+            )
+        );
+    }
 
     private FilteringJooqImpl1 filteringJooqImpl1;
 
@@ -32,8 +62,17 @@ class FilteringJooqTest {
 
     }
 
-    @Test
-    void buildConditions() {
+    private static Condition createNTrueCondition(final int n) {
+        if (n < 1)
+            throw new IllegalArgumentException("Cannot have n < 1");
+        Condition condition = null;
+        for (int i = 0; i < n; i++) {
+            if (condition == null)
+                condition = DSL.trueCondition();
+            else
+                condition = condition.and(DSL.trueCondition());
+        }
+        return condition;
     }
 
     @Test
@@ -117,6 +156,14 @@ class FilteringJooqTest {
         Assertions.assertNull(filteringJooqImpl1.getConditionOrNull(mapWithNullValues, "key1", s -> DSL.trueCondition()));
         Assertions.assertNull(filteringJooqImpl1.getConditionOrNull(mapWithEmptyValues, "key1", s -> DSL.trueCondition()));
         Assertions.assertNull(filteringJooqImpl1.getConditionOrNull(mapWithSpaceValues, "key1", s -> DSL.trueCondition()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("goodMapConditionAndResult")
+    void buildConditions(final Map<String, String> params, final List<FilterValue> filterValues, final Condition expectedCondition) {
+        filteringJooqImpl1.getFilterValues().addAll(filterValues);
+        final Condition condition = filteringJooqImpl1.buildConditions(params);
+        Assertions.assertEquals(expectedCondition, condition);
     }
 
 }
