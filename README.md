@@ -3,15 +3,6 @@
 [![Maven Central](Not yet)](https://github.com/Blackdread/filter-sort-jooq-api)
 [![ReadTheDocs](Not yet)](https://github.com/Blackdread/filter-sort-jooq-api)
 
-# Note
-First commit will contains everything in root, next release (as soon as travis and coveralls are setup) will 
-use better packaging to separate Filtering and Sorting, and also review the package "contract".
-
-Next commits will also review some parts of current  API, so it might break things but this to solve some minors issues.
-Give more access on with many small methods FilteringJooq, maybe give access to ValueImpl
-
-Next commits will review POM to allow to make it available it maven with jar, source, docs, etc. An important step to be done soon.
-
 # About Filter Sort jOOQ API
 
 Main objective is to filter/sort queries built with jOOQ and to remove a 
@@ -133,6 +124,7 @@ Got the idea to create that API after reading this page: [using-jooq-with-spring
 
 # Some links
 [jOOQ dynamic SQL](https://www.jooq.org/doc/latest/manual/sql-building/dynamic-sql/)
+
 [My Website](http://www.blackdread.org/)
 
-
+[https://oss.sonatype.org/content/repositories/snapshots/org/blackdread/filter-sort-jooq-api/](https://oss.sonatype.org/content/repositories/snapshots/org/blackdread/filter-sort-jooq-api/)
