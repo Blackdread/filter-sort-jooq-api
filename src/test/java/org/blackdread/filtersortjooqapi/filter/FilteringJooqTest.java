@@ -6,7 +6,11 @@ import com.google.common.collect.Sets;
 import org.blackdread.filtersortjooqapi.exception.FilteringApiException;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,7 +19,12 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 class FilteringJooqTest {
@@ -43,7 +52,7 @@ class FilteringJooqTest {
                 Arrays.asList(Filter.of("key1", DSL::trueCondition), Filter.of("key2", DSL::trueCondition),
                     Filter.of("key3", DSL::trueCondition), Filter.of("key4", DSL::trueCondition),
                     Filter.of("key5", DSL::trueCondition)),
-                createNTrueCondition(4)
+                createNTrueCondition(3)
             ),
             // TODO might fail sometimes as Map of Impl is not predictable in ordering
             Arguments.of(
@@ -55,8 +64,7 @@ class FilteringJooqTest {
                         .and(DSL.field("atime", Time.class).ge(Time.valueOf(v2)))),
                     Filter.of("key3", LocalDateTime::parse, v1 -> DSL.field("a_date_time", Timestamp.class).lessThan(Timestamp.valueOf(v1))),
                     Filter.of("key4", DSL::trueCondition), Filter.of("key5", DSL::trueCondition)),
-                DSL.trueCondition()
-                    .and(DSL.field("name", String.class).likeIgnoreCase("val1%"))
+                DSL.field("name", String.class).likeIgnoreCase("val1%")
                     .and(DSL.field("atime", Time.class).ge(Time.valueOf("12:23:34")))
                     .and(DSL.field("a_date_time", Timestamp.class).lessThan(Timestamp.valueOf("2017-05-17 12:25:30"))))
         );

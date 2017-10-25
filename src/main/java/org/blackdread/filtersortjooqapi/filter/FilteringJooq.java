@@ -101,11 +101,9 @@ public interface FilteringJooq {
             throw new IllegalStateException("Cannot reach");
         }
 
-        Condition andConditions = DSL.trueCondition();
-        for (Condition condition : conditions) {
-            andConditions = andConditions.and(condition);
-        }
-        return andConditions;
+        return conditions.stream()
+            .reduce(Condition::and)
+            .orElse(DSL.trueCondition());
     }
 
     // not needed for now

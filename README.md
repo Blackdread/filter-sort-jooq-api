@@ -76,7 +76,12 @@ then DTO passed to service/repository
 It is not a priority as I did not have any use for chaining conditions in many OR/AND (usually it is always AND, could a simple feature to override with a OR).
 And it requires more thought as some key/alias might be missing (ignore filter or throw or use only what's 
 available if missing keys/aliases? allow duplicate key in different Filter.or/and?) in a Filter.and(..)/Filter.or(...).
-And also we might need to have dynamic AND/OR at runtime -> often with check boxes in UI, so should design a parsable text API for dynamic AND/OR.
+
+Also we might need to have dynamic AND/OR at runtime -> often with check boxes in UI, so should design a parsable text API for dynamic AND/OR.
+
+All that is already possible by using different keys/aliases.
+
+And if use versions of Filter.of() with more than one value to be parsed then the condition chaining is already done inside the condition creator function, that is dependent on the developer code (your code).
 
 Default behavior is already to apply a AND between each filtered values.
 
@@ -104,6 +109,7 @@ these POJOs/DTOs to fit with Filtering and Sorting API.
 Problem is that POJO/DTO might already be validated and mapped to correct type and current API would transform those to
 String to then parse it again... That's something we could get rid of but to see if really necessary to implement a solution for that.
 
+Use of annotations, like @FilterIgnore to ignore a variable in filtering of that DTO.
 
 ### Sorting Map
 
