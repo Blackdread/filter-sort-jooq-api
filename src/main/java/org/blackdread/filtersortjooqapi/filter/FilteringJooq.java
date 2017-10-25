@@ -78,7 +78,7 @@ public interface FilteringJooq {
 
                 final Function<String, ?>[] parsers = filterValue.getKeyParser().getParsers();
 
-                if (parsers.length != valuesOfKeys.size())
+                if (parsers.length != valuesOfKeys.size()) // cannot happen if API has no errors
                     throw new IllegalStateException("Values to parse and parser count should be identical");
 
                 final List<Object> parsedValues = new ArrayList<>(valuesOfKeys.size());

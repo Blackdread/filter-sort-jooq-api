@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.blackdread.filtersortjooqapi.exception.FilteringApiException;
+import org.blackdread.filtersortjooqapi.filter.parser.FilterParser;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 class FilteringJooqTest {
@@ -37,6 +40,7 @@ class FilteringJooqTest {
 
     private static final Map<String, String> mapWithEmptyValues = Maps.asMap(Sets.newHashSet("key1", "key2", "key3"), a -> "");
     private static final Map<String, String> mapWithSpaceValues = Maps.asMap(Sets.newHashSet("key1", "key2", "key3"), a -> "   ");
+    private FilteringJooqImpl1 filteringJooqImpl1;
 
     // TODO Add more good ones and create another for bad ones
     static Stream<Arguments> goodMapConditionAndResult() {
@@ -49,9 +53,7 @@ class FilteringJooqTest {
             Arguments.of(
                 // this one makes no sense but this is correct ^^
                 ImmutableMap.of("key1", "value1", "key2", "12:25:30", "key3", "2017-05-17T12:25:30"),
-                Arrays.asList(Filter.of("key1", DSL::trueCondition), Filter.of("key2", DSL::trueCondition),
-                    Filter.of("key3", DSL::trueCondition), Filter.of("key4", DSL::trueCondition),
-                    Filter.of("key5", DSL::trueCondition)),
+                createFilterValueTrueConditionPrefixedN("key", 5),
                 createNTrueCondition(3)
             ),
             // TODO might fail sometimes as Map of Impl is not predictable in ordering
@@ -70,16 +72,12 @@ class FilteringJooqTest {
         );
     }
 
-    private FilteringJooqImpl1 filteringJooqImpl1;
-
-    @BeforeEach
-    void setUp() {
-        filteringJooqImpl1 = new FilteringJooqImpl1();
-    }
-
-    @AfterEach
-    void teardDown() {
-
+    static Stream<Arguments> incompleteMapOfFilterMultipleKeys() {
+        return Stream.of(
+            Arguments.of(
+                ImmutableMap.of("key1", "value1", "key2", "12:25:30", "key3", "2017-05-17T12:25:30"),
+                Arrays.asList(Filter.of("key1", "missingKey", v1 -> "val1", v2 -> "val2", (val1, val2) -> DSL.trueCondition()), Filter.of("key3", DSL::trueCondition)))
+        );
     }
 
     private static Condition createNTrueCondition(final int n) {
@@ -95,12 +93,45 @@ class FilteringJooqTest {
         return condition;
     }
 
+    private static List<FilterValue> createFilterValueTrueConditionPrefixedN(final String prefix, final int n) {
+        if (n < 1)
+            throw new IllegalArgumentException("Cannot have n < 1");
+        return IntStream.range(1, n + 1)
+            .mapToObj(i -> Filter.of(prefix + i, DSL::trueCondition))
+            .collect(Collectors.toList());
+    }
+
+    private static List<FilterValue> createFilterValueTrueConditionByKeys(final String... keys) {
+        if (keys.length < 1)
+            throw new IllegalArgumentException("Cannot have keys length < 1");
+        return Arrays.stream(keys)
+            .map(key -> Filter.of(key, DSL::trueCondition))
+            .collect(Collectors.toList());
+    }
+
+    @BeforeEach
+    void setUp() {
+        filteringJooqImpl1 = new FilteringJooqImpl1();
+    }
+
+    @AfterEach
+    void teardDown() {
+
+    }
+
     @ParameterizedTest
     @MethodSource("goodMapConditionAndResult")
     void buildConditions(final Map<String, String> params, final List<FilterValue> filterValues, final Condition expectedCondition) {
         filteringJooqImpl1.getFilterValues().addAll(filterValues);
         final Condition condition = filteringJooqImpl1.buildConditions(params);
         Assertions.assertEquals(expectedCondition, condition);
+    }
+
+    @ParameterizedTest
+    @MethodSource("incompleteMapOfFilterMultipleKeys")
+    void buildConditionsThrowsByDefaultForMissingKeyMultiple(final Map<String, String> params, final List<FilterValue> filterValues) {
+        filteringJooqImpl1.getFilterValues().addAll(filterValues);
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl1.buildConditions(params));
     }
 
     @Test
@@ -191,4 +222,59 @@ class FilteringJooqTest {
         filteringJooqImpl1.getFilterValues().add(Filter.of("key1", DSL::trueCondition));
         Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl1.buildConditions(ImmutableMap.of("key1", "value1", "key2", "12:25:30")));
     }
+
+    @Test
+    void buildConditionsDoesNotThrowsOnMissingValueForConditionSupplier() {
+        filteringJooqImpl1.getFilterValues().add(Filter.of("key1", DSL::trueCondition));
+        filteringJooqImpl1.getFilterValues().add(Filter.of("key2", DSL::trueCondition));
+        Assertions.assertEquals(createNTrueCondition(2), filteringJooqImpl1.buildConditions(ImmutableMap.of("key1", "", "key2", "12:25:30")));
+        Assertions.assertEquals(createNTrueCondition(1), filteringJooqImpl1.buildConditions(ImmutableMap.of("key1", "   ")));
+    }
+
+    @Test
+    void buildConditionsThrowsOnMissingValueForConditionCreator() {
+        filteringJooqImpl1.getFilterValues().add(Filter.of("key1", v1 -> "val1", val1 -> DSL.trueCondition()));
+        filteringJooqImpl1.getFilterValues().add(Filter.of("key2", v1 -> "val1", val1 -> DSL.trueCondition()));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl1.buildConditions(ImmutableMap.of("key1", "", "key2", "12:25:30")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl1.buildConditions(ImmutableMap.of("key1", "   ")));
+    }
+
+    @Test
+    void buildConditionsSkipOnMissingValueForConditionCreator() {
+        // It skips by setting the value to "" but that will throw an exception at parsing if parser expect something
+        final FilteringJooqImpl2 filteringJooqImpl2 = new FilteringJooqImpl2();
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key1", v1 -> "val1", val1 -> DSL.trueCondition()));
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key2", v1 -> "val1", val1 -> DSL.trueCondition()));
+        // Does not throw as parser is not parsing ^^
+        Assertions.assertEquals(createNTrueCondition(2), filteringJooqImpl2.buildConditions(ImmutableMap.of("key1", "", "key2", "12:25:30")));
+        Assertions.assertEquals(createNTrueCondition(1), filteringJooqImpl2.buildConditions(ImmutableMap.of("key1", "   ")));
+
+        // Now it will throw
+        filteringJooqImpl2.getFilterValues().set(0, Filter.of("key", LocalDateTime::parse, val1 -> DSL.trueCondition()));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key1", "", "key2", "12:25:30")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key1", "   ")));
+    }
+
+    @Test
+    void buildConditionsSkipOnMissingValueButThrowsAtParsing() {
+        final FilteringJooqImpl2 filteringJooqImpl2 = new FilteringJooqImpl2();
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key1", FilterParser.ofDateTime()::parseWithApiException, val1 -> DSL.trueCondition()));
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key2", FilterParser.ofDate()::parseWithApiException, val1 -> DSL.trueCondition()));
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key3", FilterParser.ofTime()::parseWithApiException, val1 -> DSL.trueCondition()));
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key4", FilterParser.ofInt()::parseWithApiException, val1 -> DSL.trueCondition()));
+        filteringJooqImpl2.getFilterValues().add(Filter.of("key5", FilterParser.ofByte()::parseWithApiException, val1 -> DSL.trueCondition()));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key1", "", "key2", "12:25:30")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key1", "   ")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key2", "   ")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key3", "   ")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key4", "   ")));
+        Assertions.assertThrows(FilteringApiException.class, () -> filteringJooqImpl2.buildConditions(ImmutableMap.of("key5", "   ")));
+    }
+
+    @Test
+    void buildConditionsIgnoreSomeKeys() {
+        filteringJooqImpl1.getFilterValues().addAll(Arrays.asList(Filter.of("key1", DSL::trueCondition), Filter.of("key2", DSL::trueCondition)));
+        Assertions.assertEquals(DSL.trueCondition(), filteringJooqImpl1.buildConditions(ImmutableMap.of("sort", "fsfsefes", "size", "sdsdsd", "page", "6842")));
+    }
+
 }
