@@ -37,9 +37,13 @@ Check the folder [examples](https://github.com/Blackdread/filter-sort-jooq-api/t
 
 # Current version
 
-Takes Map of key/alias with value and do the sorting/filtering
+Takes Map of key/alias with value and do the sorting/filtering.
 
-Javax validation is used mostly as documentation for code (Nullable and NotNull)
+Javax validation is used mostly as documentation for code (Nullable and NotNull).
+
+Custom exception to allow to easily catch it in web environment of Spring with @ControllerAdvice and then give proper error message in REST API.
+
+No if/else usage, everything is inside API.
 
 ## Filtering
 
