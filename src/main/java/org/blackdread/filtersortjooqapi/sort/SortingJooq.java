@@ -15,6 +15,7 @@ import java.util.Map;
 
 /**
  * <p>Interface to  be implemented by repository that wants to provide sorting</p>
+ * <p>It allows to be consistent through the app for sorting</p>
  * <p>Interface defines default methods to limit copy/paste code while still providing a way to override
  * default behavior. Using an abstract class would allow to hide internal methods but wait
  * for Java 9 private methods :)</p>

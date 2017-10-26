@@ -6,7 +6,7 @@
 # About Filter Sort jOOQ API
 
 Main objective is to filter/sort queries built with jOOQ and to remove a 
-lot of copy/paste code that filtering and sorting involves with Aliases, Validation, etc.
+lot of copy/paste code that filtering and sorting involves with Aliases, Validation, **if/else**, etc.
 
 Main points:
 
@@ -14,7 +14,9 @@ Main points:
 
 - Build Sort for jOOQ Sort
 
-- Simple parsing of values with always default behavior through all your app
+- Simple parsing of values with always default behavior through all your app (exception is always the same, can used in Spring with ControllerAdvice for **REST API**)
+
+- **Consistent filtering and sorting** through all app as the API forces to always write the same way to filter/sort
 
 - Allows to not leak your internal implementation details, you can use aliases in your API
 
@@ -22,21 +24,39 @@ Main points:
 
 See: http://www.blackdread.org/
 
-#### Personal usage
+# Usage
 
-I use this API in a Spring Boot App with Spring Data JPA and jOOQ.
+It is recommended to use this API in a Spring App with jOOQ (have a dependency to spring-data-commons for Sort).
 
 In Spring Boot, I usually build the List of Filter in an init method annotated with @PostConstruct in a repository class
 
-You can use @RequestParam Map<String, String> requestParams and Pageable pageable, or build automatically (via 
+Can use @RequestParam Map<String, String> requestParams and Pageable pageable, or build automatically (via 
 Spring) a DTO/POJO from params by specifying it in parameters of @RequestMapping method.
 
+Check the folder [examples](https://github.com/Blackdread/filter-sort-jooq-api/tree/master/examples) and [fullOne](https://github.com/Blackdread/filter-sort-jooq-api/tree/master/examples/fullOne) examples as it shows more how it can be used.
 
 # Current version
 
 Takes Map of key/alias with value and do the sorting/filtering
 
 Javax validation is used mostly as documentation for code (Nullable and NotNull)
+
+## Filtering
+
+A filter takes:
+- key/alias with no value or anything as the filter is activated if that key is present and filter does not check the value (neither parse it)
+- key/alias with one value (usually use FilterParser)
+- key/alias with many values separated by a token (usually use FilterMultipleValueParser, result is List\<T\>)
+- many keys/aliases with many values as a result (use of FilterParser and/or FilterMultipleValueParser)
+
+Throws exception on unknown key/alias, value cannot be parsed.
+
+## Sorting
+
+A sort takes:
+- a key/alias and a value that define ASC or DESC sorting (See Spring to use Pageable, Sort.by(...) and Sort.Order; In url it looks like "sort=key/alias,asc/desc")
+
+Throws exception on unknown key/alias.
 
 # Future changes
 

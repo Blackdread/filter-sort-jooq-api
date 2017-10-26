@@ -1,0 +1,230 @@
+package fullOne;
+
+import java.time.ZonedDateTime;
+
+/**
+ * A DTO representing a transfer timing.
+ */
+public class TransferTimingListingDTO {
+
+    private Long id;
+
+    private Long fileId;
+
+    private Long atableId;
+
+    private String atableName;
+
+    private String username;
+
+    private String code;
+
+    private String fileTypeName;
+
+    private Integer visualCount;
+
+    private Integer somethingCount;
+
+    private String fromStatus;
+
+    private String toStatus;
+
+    private String ip;
+
+    private Boolean transferStatus;
+
+    private ZonedDateTime transferStartedAt;
+
+    private ZonedDateTime transferEndedAt;
+
+    private Long transferTimeSpentInSeconds;
+
+    public TransferTimingListingDTO() {
+
+    }
+
+    public TransferTimingListingDTO(Long id, Long fileId, Long atableId, String atableName, String username, String code, String fileTypeName, Integer visualCount, Integer somethingCount, String fromStatus, String toStatus, String ip, Boolean transferStatus, ZonedDateTime transferStartedAt, ZonedDateTime transferEndedAt, Long transferTimeSpentInSeconds) {
+        this.id = id;
+        this.fileId = fileId;
+        this.atableId = atableId;
+        this.atableName = atableName;
+        this.username = username;
+        this.code = code;
+        this.fileTypeName = fileTypeName;
+        this.visualCount = visualCount;
+        this.somethingCount = somethingCount;
+        this.fromStatus = fromStatus;
+        this.toStatus = toStatus;
+        this.ip = ip;
+        this.transferStatus = transferStatus;
+        this.transferStartedAt = transferStartedAt;
+        this.transferEndedAt = transferEndedAt;
+        this.transferTimeSpentInSeconds = transferTimeSpentInSeconds;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
+    }
+
+    public Long getAtableId() {
+        return atableId;
+    }
+
+    public void setAtableId(Long atableId) {
+        this.atableId = atableId;
+    }
+
+    public String getAtableName() {
+        return atableName;
+    }
+
+    public void setAtableName(String atableName) {
+        this.atableName = atableName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getFileTypeName() {
+        return fileTypeName;
+    }
+
+    public void setFileTypeName(String fileTypeName) {
+        this.fileTypeName = fileTypeName;
+    }
+
+    public Integer getVisualCount() {
+        return visualCount;
+    }
+
+    public void setVisualCount(Integer visualCount) {
+        this.visualCount = visualCount;
+    }
+
+    public Integer getSomethingCount() {
+        return somethingCount;
+    }
+
+    public void setSomethingCount(Integer somethingCount) {
+        this.somethingCount = somethingCount;
+    }
+
+    public String getFromStatus() {
+        return fromStatus;
+    }
+
+    public void setFromStatus(String fromStatus) {
+        this.fromStatus = fromStatus;
+    }
+
+    public String getToStatus() {
+        return toStatus;
+    }
+
+    public void setToStatus(String toStatus) {
+        this.toStatus = toStatus;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Boolean getTransferStatus() {
+        return transferStatus;
+    }
+
+    public void setTransferStatus(Boolean transferStatus) {
+        this.transferStatus = transferStatus;
+    }
+
+    public ZonedDateTime getTransferStartedAt() {
+        return transferStartedAt;
+    }
+
+    public void setTransferStartedAt(ZonedDateTime transferStartedAt) {
+        this.transferStartedAt = transferStartedAt;
+    }
+
+    public ZonedDateTime getTransferEndedAt() {
+        return transferEndedAt;
+    }
+
+    public void setTransferEndedAt(ZonedDateTime transferEndedAt) {
+        this.transferEndedAt = transferEndedAt;
+    }
+
+    public Long getTransferTimeSpentInSeconds() {
+        return transferTimeSpentInSeconds;
+    }
+
+    public void setTransferTimeSpentInSeconds(Long transferTimeSpentInSeconds) {
+        this.transferTimeSpentInSeconds = transferTimeSpentInSeconds;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final TransferTimingListingDTO that = (TransferTimingListingDTO) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        // auto-generated by IntelliJ IDEA
+        return "TransferTimingListingDTO{" +
+            "id=" + id +
+            ", fileId=" + fileId +
+            ", atableId=" + atableId +
+            ", atableName='" + atableName + '\'' +
+            ", username='" + username + '\'' +
+            ", code='" + code + '\'' +
+            ", fileTypeName='" + fileTypeName + '\'' +
+            ", visualCount=" + visualCount +
+            ", somethingCount=" + somethingCount +
+            ", fromStatus='" + fromStatus + '\'' +
+            ", toStatus='" + toStatus + '\'' +
+            ", ip='" + ip + '\'' +
+            ", transferStatus=" + transferStatus +
+            ", transferStartedAt=" + transferStartedAt +
+            ", transferEndedAt=" + transferEndedAt +
+            ", transferTimeSpentInSeconds=" + transferTimeSpentInSeconds +
+            '}';
+    }
+}

@@ -14,11 +14,14 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
+ * <p>Interface to  be implemented by repository that wants to provide filtering</p>
+ * <p>It allows to be consistent through the app for filtering</p>
  * Created by Yoann CAPLAIN on 2017/8/25.
  */
 public interface FilteringJooq {
 
     // TODO Idea for Filter chaining AND/OR -> so kind of strategy pattern -> default on is all are AND, if overridden then it follow the one given (done via default method and overrides), we pass the whole context -> all values that matched and are ready to be filtered
+    // See Operator from jOOQ
 
     static final List<String> DEFAULT_IGNORED_KEY_FOR_FILTERING = ImmutableList.of("sort", "page", "size");
 
