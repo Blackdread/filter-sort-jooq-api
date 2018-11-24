@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/Blackdread/filter-sort-jooq-api.svg?branch=master)](https://travis-ci.org/Blackdread/filter-sort-jooq-api)
 [![Coverage Status](https://coveralls.io/repos/github/Blackdread/filter-sort-jooq-api/badge.svg?branch=master)](https://coveralls.io/github/Blackdread/filter-sort-jooq-api?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.blackdread/filter-sort-jooq-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.blackdread/filter-sort-jooq-api)
+[![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/Blackdread/filter-sort-jooq-api)
 <!-- [![Read the Docs](https://img.shields.io/readthedocs/Blackdread/filter-sort-jooq-api/pip.svg)](https://github.com/Blackdread/filter-sort-jooq-api) -->
 
 # About Filter Sort jOOQ API
