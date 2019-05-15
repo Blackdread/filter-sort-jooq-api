@@ -28,7 +28,7 @@
         <jooq.version>3.11.11</jooq.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <spring.data.version>2.1.6.RELEASE</spring.data.version>
-        <commons-lang3.version>3.8.1</commons-lang3.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
 
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
