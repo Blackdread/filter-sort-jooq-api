@@ -25,6 +25,10 @@ Main points:
 
 See: http://www.blackdread.org/
 
+# Note
+
+Most logic have been moved to [Rest filter](https://github.com/Blackdread/rest-filter)
+
 # Usage
 
 It is recommended to use this API in a Spring App with jOOQ (have a dependency to spring-data-commons for Sort).
