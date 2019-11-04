@@ -25,12 +25,12 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <guava.version>28.1-jre</guava.version>
-        <jooq.version>3.12.2</jooq.version>
+        <jooq.version>3.12.3</jooq.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <spring.data.version>2.1.6.RELEASE</spring.data.version>
         <commons-lang3.version>3.9</commons-lang3.version>
 
-        <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+        <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
