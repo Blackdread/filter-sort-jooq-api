@@ -24,7 +24,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <guava.version>28.2-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <jooq.version>3.13.1</jooq.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <spring.data.version>2.1.6.RELEASE</spring.data.version>
