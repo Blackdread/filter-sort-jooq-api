@@ -44,7 +44,7 @@
         <junit.surefire.plugin.version>1.0.1</junit.surefire.plugin.version>
         <!--<mockito.version>2.11.0</mockito.version>-->
 
-        <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
+        <jacoco-plugin.version>0.8.11</jacoco-plugin.version>
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
     </properties>
 
