@@ -27,7 +27,7 @@
         <guava.version>33.0.0-jre</guava.version>
         <jooq.version>3.19.1</jooq.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
-        <spring.data.version>3.2.1</spring.data.version>
+        <spring.data.version>3.2.3</spring.data.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
 
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
